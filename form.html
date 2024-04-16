@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Calculator</title>
+    <style>
+        /* Moved CSS styles to the same <style> tag */
+        
+        .form-box {
+            display: block;
+            border-radius: 5px;
+            border: .9px solid #5c5a5a8d;
+            padding: 20px;
+            width: 50%;
+            margin: 0 auto;
+            /* Center the form box horizontally */
+            margin-top: 5%;
+        }
+        
+        .out {
+            display: block;
+            background-color: aliceblue;
+            border-radius: 4px;
+            border: 9px solid #761f1f8d;
+            padding: 190px;
+            margin-top: -15%;
+            width: 60%;
+            margin: 0 auto;
+            /* Center the form box horizontally */
+            margin-top: -15%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-box">
+        <form id="taxForm">
+            <div class="form-group">
+                <label for="grossAmount">Enter Gross Annual Income:</label>
+                <input type="number" id="grossAmount" name="grossAmount" required>
+            </div>
+            <div class="form-group">
+                <label for="extraIncome">Enter Extra Income:</label>
+                <input type="number" id="extraIncome" name="extraIncome" required>
+            </div>
+            <div class="form-group">
+                <label for="deductions">Enter Total Applicable Deductions:</label>
+                <input type="number" id="deductions" name="deductions">
+            </div>
+            <div class="form-group">
+                <label for="age">Select Age Group:</label>
+                <select id="age" name="age" required>
+                    <option value="" disabled selected>Select Age Group</option>
+                    <option value="<40">&lt;40</option>
+                    <option value="≥ 40 & < 60">≥ 40 & &lt; 60</option>
+                    <option value="≥ 60">≥ 60</option>
+                </select>
+            </div>
+            <!-- Changed the button type to submit -->
+            <button type="submit">Calculate Tax</button>
+        </form>
+    </div>
+
+    <div class="out">
+        <!-- Added a placeholder for tax result -->
+
+        <h1 id="taxResult"> </h1>
+
+    </div>
+
+    <script>
+        // Moved the script to the bottom to ensure elements are loaded before script execution
+        document.getElementById('taxForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            calculateTax(); // Call the calculateTax function when the form is submitted
+
+        });
+
+        function calculateTax() {
+            var grossIncome = parseFloat(document.getElementById('grossAmount').value);
+            var extraIncome = parseFloat(document.getElementById('extraIncome').value);
+            var deductions = parseFloat(document.getElementById('deductions').value);
+            var age = document.getElementById('age').value;
+
+            var tax = calculateTaxAmount(grossIncome, extraIncome, deductions, age);
+            tax = (tax / 100000).toFixed(1);
+            document.getElementById('taxResult').innerHTML = 'Here is your tax information<br>' + ' Tax ' + tax + ' Lakhs' + '<br> after Deductions';
+        }
+
+        function calculateTaxAmount(grossIncome, extraIncome, deductions, age) {
+            // Calculate the total income after deductions
+            var totalIncome = grossIncome + extraIncome - deductions;
+
+            // Check if total income is less than or equal to 8 Lakhs, if yes, return 0 tax
+            if (totalIncome <= 800000) {
+                return 0;
+            }
+
+            // Calculate the taxable amount
+            var taxableAmount = totalIncome - 800000;
+
+            // Calculate tax based on age
+            if (age === "<40") {
+                return taxableAmount * 0.3; // 30% tax for age < 40
+            } else if (age === "≥ 40 & < 60") {
+                return taxableAmount * 0.4; // 40% tax for age ≥ 40 but < 60
+            } else {
+                return taxableAmount * 0.1; // 10% tax for age ≥ 60
+            }
+        }
+    </script>
+
+</body>
+
+</html>
